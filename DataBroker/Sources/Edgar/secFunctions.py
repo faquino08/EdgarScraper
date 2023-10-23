@@ -32,13 +32,7 @@ class secFunctions:
         # Connect to Postgres
         self.db = databaseHandler(self.postgres)
         self.startTime = time.time()
-        caller = inspect.stack()[1][3].upper()
-
-        # Create New Run in RunHistory
-        self.db.cur.execute('''
-            INSERT INTO PUBLIC.financedb_RUNHISTORY ("Process","Startime","SymbolsToFetch") VALUES ('%s','%s',0) RETURNING "Id";
-        ''' % (caller,self.startTime))
-        self.runId = self.db.cur.fetchone()[0]
+        self.caller = inspect.stack()[1][3].upper()
 
         self.log.info(f'')
         self.log.info(f'')
@@ -55,15 +49,21 @@ class secFunctions:
         '''
         if cik is not None:
             startTime = time.time()
+
+            self.caller = inspect.stack()[0][3].upper()
+
+            # Create New Run in RunHistory
+            self.db.cur.execute('''
+                INSERT INTO PUBLIC.financedb_RUNHISTORY ("Process","Startime","SymbolsToFetch") VALUES ('%s','%s',0) RETURNING "Id";
+            ''' % (self.caller,startTime))
+            self.runId = self.db.cur.fetchone()[0]
+
             self.log.info('')
             self.log.info(f'Fetching Annual and Fiscal Reports for: {cik}')
             self.log.info(f'Cik: {cik}')
             self.log.info(f'Start: {startTime}')
             CompanyData(cik,self.db,self.log,test,insert)
-            endTime = time.time()
-            self.log.info(f'End: {endTime}')
-            self.log.info(f'Duration: {endTime-startTime}')
-            self.log.info('')
+            self.exit()
             return
         
     def getFyAndFqReportsList(self,ciks=None,test=False,insert=True):
@@ -75,16 +75,22 @@ class secFunctions:
         '''
         if ciks is not None:
             startTime = time.time()
+
+            self.caller = inspect.stack()[0][3].upper()
+
+            # Create New Run in RunHistory
+            self.db.cur.execute('''
+                INSERT INTO PUBLIC.financedb_RUNHISTORY ("Process","Startime","SymbolsToFetch") VALUES ('%s','%s',0) RETURNING "Id";
+            ''' % (self.caller,startTime))
+            self.runId = self.db.cur.fetchone()[0]            
+
             for cik in ciks:
                 self.log.info('')
                 self.log.info(f'Fetching Annual and Fiscal Reports for: {cik}')
                 self.log.info(f'Cik: {cik}')
                 self.log.info(f'Start: {startTime}')
                 CompanyData(cik,self.db,self.log,test,insert)
-                endTime = time.time()
-                self.log.info(f'End: {endTime}')
-                self.log.info(f'Duration: {endTime-startTime}')
-                self.log.info('')
+                self.exit()
             return
 
     def getTickersNotInDb(self,date="2022-01-01"):
@@ -94,15 +100,21 @@ class secFunctions:
                 edgarindex
         '''
         startTime = time.time()
+
+        self.caller = inspect.stack()[0][3].upper()
+
+        # Create New Run in RunHistory
+        self.db.cur.execute('''
+            INSERT INTO PUBLIC.financedb_RUNHISTORY ("Process","Startime","SymbolsToFetch") VALUES ('%s','%s',0) RETURNING "Id";
+        ''' % (self.caller,startTime))
+        self.runId = self.db.cur.fetchone()[0]
+        
         self.log.info('')
         self.log.info(f'Getting Tickers Not in DB from:')
         self.log.info(f'Date: {date}')
         self.log.info(f'Start: {startTime}')
         recentTickers(date=date,databaseHandler=self.db,downloadHTML=False,logger=self.log)
-        endTime = time.time()
-        self.log.info(f'End: {endTime}')
-        self.log.info(f'Duration: {endTime-startTime}')
-        self.log.info('')
+        self.exit()
         return
 
     def getIndexEntriesOfFilingsMissing(self,year=2022,endYear=None):
@@ -111,6 +123,9 @@ class secFunctions:
         year -> (int) cut off year to look for missing filing entries
         '''
         startTime = time.time()
+
+        self.caller = inspect.stack()[0][3].upper()
+
         self.log.info('')
         self.log.info(f'Getting Index Entries of SEC Filings Missing from DB')
         self.log.info(f'Year: {year}')
@@ -118,10 +133,7 @@ class secFunctions:
         if endYear is None: endYear = datetime.datetime.today().year
         get_edgar_index(year,endYear)
         self.db.getNewIndexEntries()
-        endTime = time.time()
-        self.log.info(f'End: {endTime}')
-        self.log.info(f'Duration: {endTime-startTime}')
-        self.log.info('')
+        self.exit()
         return
         
     def exit(self):
@@ -141,4 +153,5 @@ class secFunctions:
         self.db.exit()
         self.log.info(f'Ending Run at: {self.endTime}')
         self.log.info(f'Duration: {self.endTime-self.startTime}')
+        self.log.info('')
         self.log.removeHandler(self.fh)
