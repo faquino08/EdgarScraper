@@ -1,12 +1,8 @@
 node {
     def app
 
-    agent {
-        docker { image: 'node:16-alpine' }
-    }
-
     stage('Initialize'){
-        def dockerHome = tool 'myDocker'
+        def docker = tool 'myDocker'
         env.PATH = "${dockerHome}/bin:${env.PATH}"
     }
 
