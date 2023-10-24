@@ -11,7 +11,7 @@ node {
         /* This builds the actual image; synonymous to
         * docker build on the command line */
 
-        app = docker.build("sofraserv/edgarflaskdocker")
+        app = docker.build("sofraserv/edgarflaskdocker:${env.BUILD_NUMBER}")
     }
 
     stage('Test image') {
