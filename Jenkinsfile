@@ -5,6 +5,12 @@ node {
         docker { image: 'node:16-alpine' }
     }
 
+    stage('Test') {
+        steps {
+            sh 'node --version'
+        }
+    }
+
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
 
