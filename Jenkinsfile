@@ -5,6 +5,11 @@ node {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
     }
 
+    stage('Initialize'){
+        def docker = tool 'myDocker'
+        env.PATH = "${docker}/bin:${env.PATH}"
+    }
+
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
 
