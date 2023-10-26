@@ -5,11 +5,6 @@ node {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
     }
 
-    stage('Initialize'){
-        def dockerHome = tool 'myDocker'
-        env.PATH = "${dockerHome}/bin:${env.PATH}"
-    }
-
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
 
@@ -24,7 +19,7 @@ node {
     }
 
     stage('Push image') {
-        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+        docker.withRegistry(['https://registry.hub.docker.com', 'docker-hub-credentials'],'docker') {
             app.push("${env.BUILD_NUMBER}")
             app.push("latest")
         }
