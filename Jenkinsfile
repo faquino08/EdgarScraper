@@ -24,7 +24,7 @@ node {
     }
 
     stage('Login') {
-        sh 'docker login --username $DOCKERHUB_CREDENTIALS_USR --password $DOCKERHUB_CREDENTIALS_PSW https://registry.hub.docker.com'
+        sh 'docker login -u ${DOCKERHUB_CREDENTIALS_USR} -p ${DOCKERHUB_CREDENTIALS_PSW} https://registry.hub.docker.com'
     }
 
     stage('Push image') {
