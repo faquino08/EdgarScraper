@@ -40,7 +40,8 @@ node {
             *    app.push("latest")
             *}*/
             steps {
-                sh 'docker 
+                sh 'docker push sofraserv/edgarflaskdocker:${env.BUILD_NUMBER}'
+                sh 'docker push sofraserv/edgarflaskdocker:latest'
             }
         }
     } catch (e) {
