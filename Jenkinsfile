@@ -23,12 +23,10 @@ node {
         app = docker.build("sofraserv/edgarflaskdocker:${env.BUILD_NUMBER}")
     }
 
-    stage('Login') {
-        sh 'docker login -u ${DOCKERHUB_CREDENTIALS_USR} -p ${DOCKERHUB_CREDENTIALS_PSW} https://registry.hub.docker.com'
-    }
-
     stage('Push image') {
-        sh 'docker push sofraserv/edgarflaskdocker:${env.BUILD_NUMBER}'
-        sh 'docker push sofraserv/edgarflaskdocker:latest'
+        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+            app.push("${env.BUILD_NUMBER}")
+            app.push("latest")
+        }
     }
 }
