@@ -20,7 +20,8 @@ node {
         /* This builds the actual image; synonymous to
         * docker build on the command line */
         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-            app.pull("sofraserv/financedb_base_chromium:test")
+            image = docker.image("sofraserv/financedb_base_chromium:test")
+            image.pull()
         }
 
 
