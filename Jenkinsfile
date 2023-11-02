@@ -19,6 +19,10 @@ node {
     stage('Build image') {
         /* This builds the actual image; synonymous to
         * docker build on the command line */
+        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+            app.pull("sofraserv/financedb_base_chromium:test")
+        }
+
 
         app = docker.build("sofraserv/edgarflaskdocker:${env.BUILD_NUMBER}")
     }
