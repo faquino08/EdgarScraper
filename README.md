@@ -1,4 +1,4 @@
-# EdgarScraper
+# EdgarSvc
 
 Flask app that exposes an api for running workflows that gets data from the SEC's EDGAR website. It can extract 20+ pieces of financial data including Assets, Liabilities, Revenues, Gross Profit etc
 
